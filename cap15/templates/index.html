@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Assistente Web – Arduino Serial + DHT</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <style>
+    :root { --bg:#0b0e14; --fg:#e6edf3; --muted:#9fb3c8; --card:#121621; --acc:#3a86ff; }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Roboto,Ubuntu;background:var(--bg);color:var(--fg)}
+    header{padding:16px 20px;border-bottom:1px solid #1e2533}
+    main{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));padding:16px}
+    .panel{background:var(--card);border:1px solid #1e2533;border-radius:14px;padding:16px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+    button{background:var(--acc);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+    button:hover{filter:brightness(1.05)} textarea,pre,audio,canvas{width:100%;border-radius:10px}
+    textarea{padding:10px;background:#0f1420;border:1px solid #1e2533;color:var(--fg)}
+    pre{white-space:pre-wrap;background:#0f1420;border:1px solid #1e2533;padding:10px;min-height:64px}
+    #outIntent{color:#c2e67a;font-weight:600;margin-top:6px}
+    .badge{background:#1e2533;border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted)}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Assistente Web – Arduino (seriale) + DHT</h1>
+    <p>Comandi vocali e pulsanti → Arduino; lettura DHT → grafico + salvataggio CSV.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Comandi LED</h2>
+      <div class="row">
+        <button id="btnLEDOn">💡 LED ON</button>
+        <button id="btnLEDOff">🕯️ LED OFF</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Comandi rapidi</h2>
+      <div class="row">
+        <button id="btnAskT">🌡️ Temperatura</button>
+        <button id="btnAskH">💧 Umidità</button>
+      </div>
+      <textarea id="askText" rows="2" placeholder="(opzionale) Chiedi qualcosa all'assistente..."></textarea>
+      <div class="row"><button id="btnAsk">🤖 Invia</button></div>
+    </section>
+
+    <section class="panel">
+      <h2>Voce</h2>
+      <div class="row">
+        <button id="btnRec">🎙️ Premi per parlare</button>
+        <button id="btnASR">✍️ Solo trascrivi e rispondi</button>
+      </div>
+      <p class="badge">Tienilo premuto, rilascia, poi clicca “Solo trascrivi e rispondi”.</p>
+      <h3>Risultato</h3>
+      <pre id="outText"></pre>
+      <div id="outIntent">Intent: —</div>
+      <audio id="player" controls></audio>
+    </section>
+
+    <section class="panel">
+      <h2>DHT – Grafico (ultime 3 ore)</h2>
+      <canvas id="dhtChart" height="180"></canvas>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

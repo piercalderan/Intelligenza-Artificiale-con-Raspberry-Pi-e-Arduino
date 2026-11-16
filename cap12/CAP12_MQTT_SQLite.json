@@ -1,0 +1,1174 @@
+[
+    {
+        "id": "tab_cap12_full",
+        "type": "tab",
+        "label": "CAP12 • MQTT→SQLite",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "mqtt_in_alerts",
+        "type": "mqtt in",
+        "z": "tab_cap12_full",
+        "name": "MQTT • home/cam/alerts",
+        "topic": "home/cam/alerts",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "mqtt_broker_cap12",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "json_parse_in",
+                "dbg_incoming"
+            ]
+        ]
+    },
+    {
+        "id": "json_parse_in",
+        "type": "json",
+        "z": "tab_cap12_full",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 390,
+        "y": 160,
+        "wires": [
+            [
+                "fn_build_insert_from_mqtt"
+            ]
+        ]
+    },
+    {
+        "id": "dbg_incoming",
+        "type": "debug",
+        "z": "tab_cap12_full",
+        "name": "MQTT in",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 410,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "ui_btn_init",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Init DB",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 1,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "Init DB (Create table)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "play_arrow",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "CREATE TABLE IF NOT EXISTS events ( id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, type TEXT NOT NULL, data TEXT NOT NULL );",
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "sql_init_db"
+            ]
+        ]
+    },
+    {
+        "id": "sql_init_db",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Init (msg.topic)",
+        "x": 430,
+        "y": 80,
+        "wires": [
+            [
+                "dbg_db_out"
+            ]
+        ]
+    },
+    {
+        "id": "fn_build_insert_from_mqtt",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Build INSERT (prepared → msg.params)",
+        "func": "// Accetta payload dal Python: {id, ts, type, data}\n// ts: preferisce quello ricevuto, fallback: ISO now\nconst p = msg.payload || {};\nconst ts   = String(p.ts || new Date().toISOString());\nconst type = String(p.type || \"?\");\nconst data = (typeof p.data === 'string') ? p.data : JSON.stringify(p.data || {});\n\nmsg.params = [ ts, type, data ];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 120,
+        "wires": [
+            [
+                "sql_insert_prepared",
+                "dbg_params"
+            ]
+        ]
+    },
+    {
+        "id": "sql_insert_prepared",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "prepared",
+        "sql": "INSERT INTO events (ts, type, data) VALUES (?,?,?)",
+        "name": "DB • Insert (prepared) params=msg.params",
+        "x": 690,
+        "y": 180,
+        "wires": [
+            [
+                "dbg_db_out"
+            ]
+        ]
+    },
+    {
+        "id": "dbg_params",
+        "type": "debug",
+        "z": "tab_cap12_full",
+        "name": "Params → DB",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "msg.params",
+        "targetType": "msg",
+        "x": 920,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "ui_btn_select",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "SELECT (Ultime 50)",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 2,
+        "width": 4,
+        "height": 1,
+        "passthru": true,
+        "label": "Seleziona (Ultime 50)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "refresh",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "SELECT id, ts, type, data FROM events ORDER BY id DESC LIMIT 50;",
+        "topicType": "str",
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "sql_select"
+            ]
+        ]
+    },
+    {
+        "id": "inj_autorefresh",
+        "type": "inject",
+        "z": "tab_cap12_full",
+        "name": "Auto-refresh 5s",
+        "props": [
+            {
+                "p": "topic",
+                "v": "SELECT id, ts, type, data FROM events ORDER BY id DESC LIMIT 50;",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "x": 200,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "sql_select",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Select (msg.topic)",
+        "x": 430,
+        "y": 260,
+        "wires": [
+            [
+                "ui_table_events",
+                "dbg_db_out"
+            ]
+        ]
+    },
+    {
+        "id": "ui_table_events",
+        "type": "ui_template",
+        "z": "tab_cap12_full",
+        "group": "ui_grp_cap12_tbl_full",
+        "name": "Tabella Eventi",
+        "order": 1,
+        "width": "12",
+        "height": "10",
+        "format": "<table style=\"width:100%; border-collapse:collapse;\">\n  <thead>\n    <tr>\n      <th style=\"text-align:left; padding:6px;\">#</th>\n      <th style=\"text-align:left; padding:6px;\">Timestamp</th>\n      <th style=\"text-align:left; padding:6px;\">Type</th>\n      <th style=\"text-align:left; padding:6px;\">Data</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr ng-repeat=\"r in msg.payload\">\n      <td style=\"padding:6px;\">{{$index+1}}</td>\n      <td style=\"padding:6px;\">{{r.ts}}</td>\n      <td style=\"padding:6px;\">{{r.type}}</td>\n      <td style=\"padding:6px; white-space:pre-wrap;\">{{r.data}}</td>\n    </tr>\n  </tbody>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 710,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "catch_sql_full",
+        "type": "catch",
+        "z": "tab_cap12_full",
+        "name": "Catch (SQLite)",
+        "scope": [
+            "sql_init_db",
+            "sql_insert_prepared",
+            "sql_select"
+        ],
+        "uncaught": false,
+        "x": 190,
+        "y": 340,
+        "wires": [
+            [
+                "dbg_error_full"
+            ]
+        ]
+    },
+    {
+        "id": "dbg_db_out",
+        "type": "debug",
+        "z": "tab_cap12_full",
+        "name": "DB out",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 730,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "dbg_error_full",
+        "type": "debug",
+        "z": "tab_cap12_full",
+        "name": "ERROR",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload.error",
+        "statusType": "msg",
+        "x": 390,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "35c71f1ca9f2c531",
+        "type": "inject",
+        "z": "tab_cap12_full",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "CREATE TABLE IF NOT EXISTS events ( id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, type TEXT NOT NULL, data TEXT NOT NULL );",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 40,
+        "wires": [
+            [
+                "sql_init_db"
+            ]
+        ]
+    },
+    {
+        "id": "aa11bb256cad64ce",
+        "type": "inject",
+        "z": "tab_cap12_full",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"ts\":\"2025-10-17T14:30:31+02:00\",\"type\":\"motion_start\",\"data\":\"movement_detected\"}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 120,
+        "wires": [
+            [
+                "fn_build_insert_from_mqtt"
+            ]
+        ]
+    },
+    {
+        "id": "adb1afaf119c8444",
+        "type": "inject",
+        "z": "tab_cap12_full",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 420,
+        "wires": [
+            [
+                "ui_btn_select"
+            ]
+        ]
+    },
+    {
+        "id": "ui_btn_export_csv",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Esporta CSV (ultime 50)",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 3,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "Esporta CSV",
+        "tooltip": "Salva le ultime 50 righe in CSV",
+        "color": "",
+        "bgcolor": "",
+        "icon": "save_alt",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "SELECT id, ts, type, data FROM events ORDER BY id DESC LIMIT 50;",
+        "x": 150,
+        "y": 460,
+        "wires": [
+            [
+                "sql_select_for_csv"
+            ]
+        ]
+    },
+    {
+        "id": "sql_select_for_csv",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Select (per CSV)",
+        "x": 410,
+        "y": 460,
+        "wires": [
+            [
+                "fn_rows_to_csv"
+            ]
+        ]
+    },
+    {
+        "id": "fn_rows_to_csv",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Rows → CSV",
+        "func": "// Converte array di righe SQLite in CSV (header incluso)\n// File: /home/pi/nodered_data/exports/events_YYYYMMDD_HHMMSS.csv\n\nfunction pad(n){ return n<10?('0'+n):(''+n); }\nconst now = new Date();\nconst ts = now.getFullYear().toString() + pad(now.getMonth()+1) + pad(now.getDate()) + \"_\" + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());\nconst outdir = \"/home/pi/nodered_data/exports\";\nconst fname = `${outdir}/events_${ts}.csv`;\n\nconst rows = Array.isArray(msg.payload) ? msg.payload : [];\nconst header = [\"id\",\"ts\",\"type\",\"data\"];\n\n// CSV escaping\nfunction esc(v){\n  if (v === null || v === undefined) return \"\";\n  v = String(v);\n  if (v.includes('\"') || v.includes(',') || v.includes('\\n')){\n    v = '\"' + v.replace(/\"/g,'\"\"') + '\"';\n  }\n  return v;\n}\n\nlet lines = [header.join(\",\")];\nfor (const r of rows){\n  const line = [esc(r.id), esc(r.ts), esc(r.type), esc(r.data)].join(\",\");\n  lines.push(line);\n}\n\nmsg.filename = fname;\nmsg.payload = lines.join(\"\\n\") + \"\\n\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 460,
+        "wires": [
+            [
+                "file_write_csv",
+                "ui_toast_saved"
+            ]
+        ]
+    },
+    {
+        "id": "file_write_csv",
+        "type": "file",
+        "z": "tab_cap12_full",
+        "name": "Scrivi CSV",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 820,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_toast_saved",
+        "type": "ui_toast",
+        "z": "tab_cap12_full",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "CSV salvato",
+        "name": "Toast: salvato",
+        "x": 840,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "ui_btn_clear",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Azzera events",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 4,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "Azzera tabella",
+        "tooltip": "DELETE FROM events; (attenzione!)",
+        "color": "#ffffff",
+        "bgcolor": "#c62828",
+        "icon": "delete_forever",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 130,
+        "y": 520,
+        "wires": [
+            [
+                "fn_build_clear_msgs"
+            ]
+        ]
+    },
+    {
+        "id": "fn_build_clear_msgs",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Build DELETE (e VACUUM)",
+        "func": "// Invia 2 messaggi in sequenza: DELETE e (opzionale) VACUUM\n// msg1 → DELETE FROM events;\n// msg2 → SELECT count(*) ... per forzare refresh; (puoi sostituire con VACUUM)\n\nlet msg1 = { topic: \"DELETE FROM events;\" };\nlet msg2 = { topic: \"SELECT id, ts, type, data FROM events ORDER BY id DESC LIMIT 50;\" };\nreturn [ [ msg1, msg2 ] ];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 390,
+        "y": 520,
+        "wires": [
+            [
+                "sql_clear",
+                "sql_select_refresh"
+            ]
+        ]
+    },
+    {
+        "id": "sql_clear",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • DELETE",
+        "x": 600,
+        "y": 520,
+        "wires": [
+            [
+                "ui_toast_cleared"
+            ]
+        ]
+    },
+    {
+        "id": "ui_toast_cleared",
+        "type": "ui_toast",
+        "z": "tab_cap12_full",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "Tabella azzerata",
+        "name": "Toast: cleared",
+        "x": 800,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "sql_select_refresh",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Refresh tabella",
+        "x": 480,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_btn_export_csv_face",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Esporta CSV (face)",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 5,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "Esporta CSV (solo face)",
+        "tooltip": "Salva solo eventi type='face'",
+        "color": "",
+        "bgcolor": "",
+        "icon": "save_alt",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "SELECT id, ts, type, data FROM events WHERE type='face' ORDER BY id DESC LIMIT 1000;",
+        "x": 190,
+        "y": 640,
+        "wires": [
+            [
+                "sql_select_for_csv_face"
+            ]
+        ]
+    },
+    {
+        "id": "sql_select_for_csv_face",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Select (face→CSV)",
+        "x": 480,
+        "y": 640,
+        "wires": [
+            [
+                "fn_rows_to_csv_face"
+            ]
+        ]
+    },
+    {
+        "id": "fn_rows_to_csv_face",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Rows→CSV (face)",
+        "func": "// Salva CSV: /home/pi/nodered_data/exports/events_face_YYYYMMDD_HHMMSS.csv\nfunction pad(n){return n<10?('0'+n):(''+n);} \nconst now=new Date();\nconst ts=now.getFullYear().toString()+pad(now.getMonth()+1)+pad(now.getDate())+\"_\"+pad(now.getHours())+pad(now.getMinutes())+pad(now.getSeconds());\nconst outdir=\"/home/pi/nodered_data/exports\";\nmsg.filename=`${outdir}/events_face_${ts}.csv`;\nconst rows=Array.isArray(msg.payload)?msg.payload:[];\nconst header=[\"id\",\"ts\",\"type\",\"data\"];\nfunction esc(v){ if(v==null)return\"\"; v=String(v); if(v.includes('\"')||v.includes(',')||v.includes('\\n')) v='\"'+v.replace(/\"/g,'\"\"')+'\"'; return v; }\nlet lines=[header.join(\",\")];\nfor(const r of rows){ lines.push([esc(r.id),esc(r.ts),esc(r.type),esc(r.data)].join(\",\")); }\nmsg.payload=lines.join(\"\\n\")+\"\\n\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 640,
+        "wires": [
+            [
+                "file_write_csv_face",
+                "ui_toast_saved_face"
+            ]
+        ]
+    },
+    {
+        "id": "file_write_csv_face",
+        "type": "file",
+        "z": "tab_cap12_full",
+        "name": "Scrivi CSV (face)",
+        "filename": "",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 950,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_toast_saved_face",
+        "type": "ui_toast",
+        "z": "tab_cap12_full",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "CSV face salvato",
+        "name": "Toast: face salvato",
+        "x": 970,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "ui_btn_export_csv_mburst",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Esporta CSV (motion_burst)",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 6,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Esporta CSV (solo motion_burst)",
+        "tooltip": "Salva solo eventi type='motion_burst'",
+        "color": "",
+        "bgcolor": "",
+        "icon": "save_alt",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "SELECT id, ts, type, data FROM events WHERE type='motion_burst' ORDER BY id DESC LIMIT 1000;",
+        "x": 220,
+        "y": 720,
+        "wires": [
+            [
+                "sql_select_for_csv_mburst"
+            ]
+        ]
+    },
+    {
+        "id": "sql_select_for_csv_mburst",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Select (mburst→CSV)",
+        "x": 520,
+        "y": 720,
+        "wires": [
+            [
+                "fn_rows_to_csv_mburst"
+            ]
+        ]
+    },
+    {
+        "id": "fn_rows_to_csv_mburst",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Rows→CSV (motion_burst)",
+        "func": "// Salva CSV: /home/pi/nodered_data/exports/events_motion_burst_YYYYMMDD_HHMMSS.csv\nfunction pad(n){return n<10?('0'+n):(''+n);} \nconst now=new Date();\nconst ts=now.getFullYear().toString()+pad(now.getMonth()+1)+pad(now.getDate())+\"_\"+pad(now.getHours())+pad(now.getMinutes())+pad(now.getSeconds());\nconst outdir=\"/home/pi/nodered_data/exports\";\nmsg.filename=`${outdir}/events_motion_burst_${ts}.csv`;\nconst rows=Array.isArray(msg.payload)?msg.payload:[];\nconst header=[\"id\",\"ts\",\"type\",\"data\"];\nfunction esc(v){ if(v==null)return\"\"; v=String(v); if(v.includes('\"')||v.includes(',')||v.includes('\\n')) v='\"'+v.replace(/\"/g,'\"\"')+'\"'; return v; }\nlet lines=[header.join(\",\")];\nfor(const r of rows){ lines.push([esc(r.id),esc(r.ts),esc(r.type),esc(r.data)].join(\",\")); }\nmsg.payload=lines.join(\"\\n\")+\"\\n\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 720,
+        "wires": [
+            [
+                "file_write_csv_mburst",
+                "ui_toast_saved_mburst"
+            ]
+        ]
+    },
+    {
+        "id": "file_write_csv_mburst",
+        "type": "file",
+        "z": "tab_cap12_full",
+        "name": "Scrivi CSV (mburst)",
+        "filename": "",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 1030,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_toast_saved_mburst",
+        "type": "ui_toast",
+        "z": "tab_cap12_full",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "CSV motion_burst salvato",
+        "name": "Toast: mburst salvato",
+        "x": 1060,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "ui_sw_confirm_clear",
+        "type": "ui_switch",
+        "z": "tab_cap12_full",
+        "name": "Conferma azzera",
+        "label": "Conferma azzera",
+        "tooltip": "Attiva per permettere l'azzeramento",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 7,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "x": 180,
+        "y": 800,
+        "wires": [
+            [
+                "ch_store_confirm_flag"
+            ]
+        ]
+    },
+    {
+        "id": "ch_store_confirm_flag",
+        "type": "change",
+        "z": "tab_cap12_full",
+        "name": "flow.confirm_clear ← msg.payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "confirm_clear",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "x": 480,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_btn_clear_confirm",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Azzera (conferma)",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 8,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "Azzera (conferma)",
+        "tooltip": "Richiede toggle 'Conferma azzera' ON",
+        "color": "#ffffff",
+        "bgcolor": "#c62828",
+        "icon": "delete_forever",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 190,
+        "y": 860,
+        "wires": [
+            [
+                "fn_gate_clear"
+            ]
+        ]
+    },
+    {
+        "id": "fn_gate_clear",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Se confermato → DELETE",
+        "func": "// Se flow.confirm_clear è true → esegue DELETE e refresh\nconst ok = flow.get('confirm_clear') === true;\nif (!ok) {\n  // Avvisa utente\n  return [null, {payload: \"Per azzerare attiva il toggle 'Conferma azzera'\"}];\n}\n// Due messaggi: DELETE e poi SELECT refresh\nlet msg1 = { topic: \"DELETE FROM events;\" };\nlet msg2 = { topic: \"SELECT id, ts, type, data FROM events ORDER BY id DESC LIMIT 50;\" };\nreturn [[msg1, msg2], null];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 860,
+        "wires": [
+            [
+                "sql_clear_confirm",
+                "sql_select_refresh_confirm"
+            ],
+            [
+                "ui_toast_need_confirm"
+            ]
+        ]
+    },
+    {
+        "id": "sql_clear_confirm",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • DELETE (confirm)",
+        "x": 760,
+        "y": 840,
+        "wires": [
+            [
+                "ui_toast_cleared_confirm",
+                "ch_reset_confirm_flag",
+                "set_switch_off"
+            ]
+        ]
+    },
+    {
+        "id": "sql_select_refresh_confirm",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Refresh (confirm)",
+        "x": 780,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_toast_need_confirm",
+        "type": "ui_toast",
+        "z": "tab_cap12_full",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "Operazione non confermata",
+        "name": "Toast: serve conferma",
+        "x": 780,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "ui_toast_cleared_confirm",
+        "type": "ui_toast",
+        "z": "tab_cap12_full",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "topic": "Tabella azzerata",
+        "name": "Toast: cleared",
+        "x": 1020,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "ch_reset_confirm_flag",
+        "type": "change",
+        "z": "tab_cap12_full",
+        "name": "flow.confirm_clear ← false",
+        "rules": [
+            {
+                "t": "set",
+                "p": "confirm_clear",
+                "pt": "flow",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "x": 1020,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "set_switch_off",
+        "type": "change",
+        "z": "tab_cap12_full",
+        "name": "Switch OFF",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "x": 1010,
+        "y": 920,
+        "wires": [
+            [
+                "ui_sw_confirm_clear"
+            ]
+        ]
+    },
+    {
+        "id": "ui_dd_filter",
+        "type": "ui_dropdown",
+        "z": "tab_cap12_full",
+        "name": "Filtro",
+        "label": "Filtro eventi",
+        "tooltip": "",
+        "place": "Scegli",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 9,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Tutti",
+                "value": "all",
+                "type": "str"
+            },
+            {
+                "label": "face",
+                "value": "face",
+                "type": "str"
+            },
+            {
+                "label": "motion_burst",
+                "value": "motion_burst",
+                "type": "str"
+            }
+        ],
+        "payload": "all",
+        "topic": "",
+        "x": 190,
+        "y": 980,
+        "wires": [
+            [
+                "ch_store_filter",
+                "fn_build_select_filtered"
+            ]
+        ]
+    },
+    {
+        "id": "ch_store_filter",
+        "type": "change",
+        "z": "tab_cap12_full",
+        "name": "flow.filter_type ← msg.payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "filter_type",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "x": 510,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ui_btn_refresh_filtered",
+        "type": "ui_button",
+        "z": "tab_cap12_full",
+        "name": "Aggiorna (filtro)",
+        "group": "ui_grp_cap12_ctrl_full",
+        "order": 10,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "Aggiorna (usa filtro)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "refresh",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 200,
+        "y": 1020,
+        "wires": [
+            [
+                "fn_build_select_filtered"
+            ]
+        ]
+    },
+    {
+        "id": "inj_autorefresh_filtered",
+        "type": "inject",
+        "z": "tab_cap12_full",
+        "name": "Auto-refresh filtro 5s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "x": 230,
+        "y": 1060,
+        "wires": [
+            [
+                "fn_build_select_filtered"
+            ]
+        ]
+    },
+    {
+        "id": "fn_build_select_filtered",
+        "type": "function",
+        "z": "tab_cap12_full",
+        "name": "Build SELECT con filtro",
+        "func": "let f = flow.get('filter_type') || 'all';\nlet base = \"SELECT id, ts, type, data FROM events\";\nlet where = \"\";\nif (f === 'face') where = \" WHERE type='face'\";\nif (f === 'motion_burst') where = \" WHERE type='motion_burst'\";\nmsg.topic = base + where + \" ORDER BY id DESC LIMIT 50;\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 1040,
+        "wires": [
+            [
+                "sql_select_filtered"
+            ]
+        ]
+    },
+    {
+        "id": "sql_select_filtered",
+        "type": "sqlite",
+        "z": "tab_cap12_full",
+        "mydb": "sqlcfg_cap12_full",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "DB • Select (filtered)",
+        "x": 790,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "mqtt_broker_cap12",
+        "type": "mqtt-broker",
+        "name": "Local Mosquitto",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "tls": "",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "ui_grp_cap12_ctrl_full",
+        "type": "ui_group",
+        "name": "Controlli",
+        "tab": "ui_tab_cap12_full",
+        "order": 1,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "sqlcfg_cap12_full",
+        "type": "sqlitedb",
+        "db": "/home/pi/nodered_data/cv_events.db",
+        "mode": "RW"
+    },
+    {
+        "id": "ui_grp_cap12_tbl_full",
+        "type": "ui_group",
+        "name": "Eventi",
+        "tab": "ui_tab_cap12_full",
+        "order": 2,
+        "disp": true,
+        "width": 12,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ui_tab_cap12_full",
+        "type": "ui_tab",
+        "name": "CAP12 • CV DB",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "102f8d552ae71d65",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6",
+            "node-red-node-sqlite": "1.1.1"
+        }
+    }
+]
