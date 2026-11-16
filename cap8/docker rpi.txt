@@ -1,0 +1,10 @@
+sudo apt update
+sudo apt install docker.io -y
+sudo docker run -d \
+  --name homeassistant \
+  --privileged \
+  --restart=unless-stopped \
+  -e TZ=Europe/Athens \
+  -v /home/pi/ha_config:/config \
+  --network=host \
+  ghcr.io/home-assistant/home-assistant:stable

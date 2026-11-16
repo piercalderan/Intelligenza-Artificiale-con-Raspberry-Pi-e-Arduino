@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cloud Logger (Firebase RTDB)</title>
+  <style>
+    :root { --card:#f7f7f9; --border:#e5e7eb; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; color:#111827; }
+    h1 { margin: 0 0 16px; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin: 10px 0; }
+    .pill { display:inline-block; padding:4px 10px; border-radius:999px; background:#fff; border:1px solid var(--border); }
+    .muted { color:#6b7280; }
+    button, input[type="date"] {
+      padding:8px 12px; border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer;
+    }
+    button:hover { background:#f0f0f3; }
+    #valori b { font-weight:600; }
+    canvas { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>Cloud Logger (Firebase RTDB)</h1>
+
+  <!-- Barra controlli -->
+  <div class="row">
+    <span class="pill">Device: <b>arduino1</b></span>
+    <label>Giorno: <input type="date" id="pickDay"></label>
+    <button id="btnCsv">Scarica CSV</button>
+    <span id="status" class="muted"></span>
+  </div>
+
+  <!-- Ultimo valore -->
+  <div class="card">
+    <div id="valori" class="muted">Caricamento…</div>
+  </div>
+
+  <!-- Grafico -->
+  <div class="card">
+    <canvas id="chart" height="120"></canvas>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase compat (no modules) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script>
+    // ======= INCOLLA QUI LA TUA CONFIGURAZIONE FIREBASE =======
+    
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    // ==========================================================
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const valoriEl = document.getElementById("valori");
+    const statusEl = document.getElementById("status");
+    const pickDay = document.getElementById("pickDay");
+    const btnCsv = document.getElementById("btnCsv");
+
+    // Imposta data odierna nel selettore
+    const todayISO = new Date().toISOString().slice(0,10);
+    pickDay.value = todayISO;
+
+    // --- Card "Ultimo valore" ---
+    db.ref("/devices/arduino1/last").on("value", (snap) => {
+      const v = snap.val();
+      if (!v) { valoriEl.textContent = "Nessun dato."; return; }
+      valoriEl.innerHTML = `
+        <b>Ultimo aggiornamento:</b> ${v.ts}<br/>
+        🌡️ Temp: <b>${v.temp} °C</b> &nbsp; 💧 Hum: <b>${v.hum} %</b>
+      `;
+    });
+
+    // --- Grafico storico (giorno selezionato) ---
+    const labels = [];
+    const tempData = [];
+    const humData  = [];
+    const chart = new Chart(document.getElementById("chart"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "Temp (°C)", data: tempData },
+          { label: "Hum (%)",  data: humData  }
+        ]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        interaction: { mode: 'nearest', intersect: false },
+        scales: {
+          x: { title: { display: true, text: "Ora" } },
+          y: { title: { display: true, text: "Valore" } }
+        }
+      }
+    });
+
+    let histRef = null;   // per staccare i listener
+    let csvRows = [];     // cache per export
+
+    function detachHistory() {
+      if (histRef) { histRef.off(); histRef = null; }
+    }
+
+    function loadDay(isoDay) {
+      const dayKey = isoDay.replace(/-/g,""); // YYYYMMDD
+      // reset dati
+      labels.length = 0; tempData.length = 0; humData.length = 0; csvRows = [];
+      chart.update();
+      statusEl.textContent = "Carico dati…";
+
+      detachHistory();
+      histRef = db.ref(`/devices/arduino1/history/${dayKey}`).limitToLast(2000);
+
+      histRef.on("child_added", (snap) => {
+        const v = snap.val(); if (!v) return;
+        const hhmmss = (v.ts||"").slice(11,19);
+        labels.push(hhmmss);
+        tempData.push(v.temp);
+        humData.push(v.hum);
+        csvRows.push({ ts:v.ts, temp:v.temp, hum:v.hum });
+        chart.update();
+        statusEl.textContent = `Punti: ${labels.length}`;
+      });
+
+      histRef.on("value", (snap) => {
+        if (!snap.exists()) statusEl.textContent = "Nessun dato per questo giorno.";
+      });
+    }
+
+    // primo carico
+    loadDay(todayISO);
+
+    // cambio giorno
+    pickDay.addEventListener("change", e => loadDay(e.target.value));
+
+    // Export CSV
+    btnCsv.addEventListener("click", () => {
+      if (!csvRows.length) { alert("Nessun dato da esportare."); return; }
+      const header = "timestamp,temp,hum";
+      const lines = csvRows.map(r => `${r.ts},${r.temp},${r.hum}`);
+      const blob = new Blob([header+"\n"+lines.join("\n")], {type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `arduino1_${pickDay.value}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // pulizia quando si chiude/la pagina ricarica
+    window.addEventListener("beforeunload", detachHistory);
+  </script>
+</body>
+</html>
