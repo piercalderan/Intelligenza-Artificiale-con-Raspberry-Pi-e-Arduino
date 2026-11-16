@@ -1,0 +1,1346 @@
+[
+    {
+        "id": "0fe2d26d898f1254",
+        "type": "tab",
+        "label": "CAP7 MQTT Agent",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0e7365c68f7d41e0",
+        "type": "ui_switch",
+        "z": "0fe2d26d898f1254",
+        "name": "LED 1",
+        "label": "LED 1",
+        "tooltip": "",
+        "group": "85f5f51f0d526f74",
+        "order": 1,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "lab/arduino1/cmd/led/1",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "ON",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "OFF",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "className": "",
+        "x": 70,
+        "y": 180,
+        "wires": [
+            [
+                "039445b6d046d351"
+            ]
+        ]
+    },
+    {
+        "id": "6d95e9cc11d91dbb",
+        "type": "ui_switch",
+        "z": "0fe2d26d898f1254",
+        "name": "LED 2",
+        "label": "LED 2",
+        "tooltip": "",
+        "group": "85f5f51f0d526f74",
+        "order": 5,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "lab/arduino1/cmd/led/2",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "ON",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "OFF",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "className": "",
+        "x": 70,
+        "y": 240,
+        "wires": [
+            [
+                "b7d9ad55759464dd"
+            ]
+        ]
+    },
+    {
+        "id": "aa15e5f577e6a149",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "LED 3 BLINK",
+        "group": "85f5f51f0d526f74",
+        "order": 9,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "LED 3 BLINK",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "BLINK",
+        "payloadType": "str",
+        "topic": "lab/arduino1/cmd/led/3",
+        "topicType": "str",
+        "x": 90,
+        "y": 300,
+        "wires": [
+            [
+                "7ad028eb19720e66"
+            ]
+        ]
+    },
+    {
+        "id": "039445b6d046d351",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ led1",
+        "topic": "lab/arduino1/cmd/led/1",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 300,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b7d9ad55759464dd",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ led2",
+        "topic": "lab/arduino1/cmd/led/2",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 300,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "7ad028eb19720e66",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ led3",
+        "topic": "lab/arduino1/cmd/led/3",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 300,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "01605467bc191bff",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "Read Sensor",
+        "group": "85f5f51f0d526f74",
+        "order": 20,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Read Sensor",
+        "tooltip": "Richiedi DHT11",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "READ",
+        "payloadType": "str",
+        "topic": "lab/arduino1/cmd/sensor",
+        "topicType": "str",
+        "x": 90,
+        "y": 360,
+        "wires": [
+            [
+                "e35cfbe09b9a9c44"
+            ]
+        ]
+    },
+    {
+        "id": "e35cfbe09b9a9c44",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ sensor",
+        "topic": "lab/arduino1/cmd/sensor",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 310,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "8415d278b736d694",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "← sensor",
+        "topic": "lab/arduino1/sensortxt",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 480,
+        "wires": [
+            [
+                "0a8f508265e4857b",
+                "011853eadbc92af0"
+            ]
+        ]
+    },
+    {
+        "id": "ca970a862270ec38",
+        "type": "ui_gauge",
+        "z": "0fe2d26d898f1254",
+        "name": "Temp",
+        "group": "85f5f51f0d526f74",
+        "order": 19,
+        "width": 3,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Temp °C",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00bcd4",
+            "#39c0ed",
+            "#5bb1ff"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 550,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "51de0771c59155a0",
+        "type": "ui_gauge",
+        "z": "0fe2d26d898f1254",
+        "name": "Hum",
+        "group": "85f5f51f0d526f74",
+        "order": 18,
+        "width": 3,
+        "height": 3,
+        "gtype": "wave",
+        "title": "Hum %",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00bcd4",
+            "#39c0ed",
+            "#5bb1ff"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 550,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "5d588bb20f61bfd5",
+        "type": "ui_text",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "order": 21,
+        "width": 6,
+        "height": 1,
+        "name": "Sensor Text",
+        "label": "Ultima lettura",
+        "format": "{{value}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 570,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "0a8f508265e4857b",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "sensor raw",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 350,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "485da59630f5883d",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "← BTN",
+        "topic": "lab/arduino1/btn",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 530,
+        "wires": [
+            [
+                "c419300effc16bec",
+                "95154415e59992d0"
+            ]
+        ]
+    },
+    {
+        "id": "c419300effc16bec",
+        "type": "json",
+        "z": "0fe2d26d898f1254",
+        "name": "JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 310,
+        "y": 530,
+        "wires": [
+            [
+                "82b998165ce75909"
+            ]
+        ]
+    },
+    {
+        "id": "82b998165ce75909",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "btn evt",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 500,
+        "y": 530,
+        "wires": []
+    },
+    {
+        "id": "95154415e59992d0",
+        "type": "ui_text",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "order": 14,
+        "width": 6,
+        "height": 1,
+        "name": "BTN text",
+        "label": "Eventi pulsanti",
+        "format": "BTN {{msg.payload.id}} premuto",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 330,
+        "y": 570,
+        "wires": []
+    },
+    {
+        "id": "2325e48e5de0e8c1",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "← ACK LED1",
+        "topic": "lab/arduino1/ack/led/1",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 490,
+        "y": 260,
+        "wires": [
+            [
+                "13887e90214eb29d"
+            ]
+        ]
+    },
+    {
+        "id": "13887e90214eb29d",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "ACK1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 650,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "bb1d67d8ca2797ad",
+        "type": "ui_template",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "name": "Dark Theme – AI Style",
+        "order": 22,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n  .md-card,\n  .nr-dashboard-cardpanel,\n  .nr-dashboard-template {\n    background-color: #5b6782 !important;\n    color: #eaf4ff !important;\n  }\n\n  .nr-dashboard-gauge text {\n    fill: #eaf4ff !important;\n  }\n</style>\n<style id=\"ai-dark-theme\">\n:root{\n  --bg:#0f1e2c;\n  \n  --card:#132434; \n  --text:#eaf4ff; \n  --muted:#a7c0d8; \n  --line:#2b3a4a; \n  --accent:#eaf4ff; \n  --accent-2:#2b88d8;\n}\n/* canvas generale */\nbody.nr-dashboard-theme, md-content, .nr-dashboard-template, .nrdb-body, .nr-dashboard-theme md-content._md{ background:var(--bg) !important; }\n\n/* 🔹 Testi dei valori nei gauge */\n.nr-dashboard-theme .nr-dashboard-gauge .nr-dashboard-gauge-value text,\n.nr-dashboard-theme .nr-dashboard-gauge text {\nfill: #eaf4ff !important; /* testo chiaro */\n}\n\n/* 🔹 Colore sfondo gruppi e card */\n.nr-dashboard-theme .card,\n.nr-dashboard-theme .group,\n.md-card,\n.vuetify-styles .v-card {\nbackground-color: #0f172a !important; /* blu scuro */\nborder-radius: 10px !important;\nborder: 1px solid #1e293b !important;\n}\n\n\n/* card / panel */\nmd-card, .nr-dashboard-widget, .nr-dashboard-template .nr-dashboard-cardpanel{\nbackground:var(--card) !important; color:var(--text) !important;\nborder-radius:14px !important; box-shadow:0 6px 24px rgba(0,0,0,.25) !important;\n}\n/* titoli card */\nmd-card md-toolbar, .nr-dashboard-cardtitle{ background:transparent !important; color:var(--accent) !important; border-bottom:1px solid transparent !important; }\n\n/* testo generico */\n.nr-dashboard-text, .nr-dashboard-template, .nr-dashboard-template *{ color:var(--text) !important; }\n\n/* input & textarea */\nmd-input-container .md-input, .nr-dashboard-textinput input, .nr-dashboard-template textarea, textarea.md-input{\n  background:#0f1e2c !important; color:var(--text) !important; border:1px solid var(--line) !important;\n  border-radius:10px !important; padding:8px 10px !important;\n}\n/* placeholder */\nmd-input-container .md-input::placeholder, .nr-dashboard-textinput input::placeholder, textarea::placeholder{ color:var(--muted) !important; }\n\n/* dropdown */\nmd-select, md-select-value, .md-select-value .md-text{ color:var(--text) !important; }\nmd-select{ border:1px solid var(--line) !important; border-radius:10px !important; background:#0f1e2c !important; padding:6px 8px !important; }\n\n/* bottoni */\nmd-button, .nr-dashboard-button .md-button{\n  background:var(--accent) !important; \n  color:#00223d !important;   \n  border-radius:10px !important;\n  font-weight:600 !important;\n\n}\nmd-button.md-raised:not([disabled]):hover{ filter:brightness(1.06); }\nmd-button[disabled]{ opacity:.5 !important; }\n\n/* switch/slider */\nmd-switch .md-bar{ background:var(--line) !important; }\nmd-switch.md-checked .md-bar{ background:linear-gradient(90deg, var(--accent), var(--accent-2)) !important; }\nmd-switch .md-thumb{ background:#a6d3f5 !important; border:1px solid var(--line) !important; }\nmd-switch.md-checked .md-thumb{ background:#f5f5a6 !important; border-color:transparent !important; }\n\n/* tabelle e liste */\nmd-list-item, md-list{ background:transparent !important; color:var(--text) !important; }\n\n/* debug panel (se mostrato in ui_template) */\npre, code{ \nbackground:#4e6478 !important; \nborder:1px solid var(--line); \ncolor:var(--text); \nborder-radius:8px; \npadding:8px; }\n\n/* separatori leggeri */\nmd-divider, .nr-dashboard-template hr{ border-color:var(--line) !important; }\n\n/* link */\na, a:visited{ color:var(--accent) !important; }\na:hover{ color:var(--muted) !important; }\n\n/* spacing uniforme dentro i widget */\n.nr-dashboard-template .pad, .nr-dashboard-text input, .nr-dashboard-template input, .nr-dashboard-template textarea{ box-sizing:border-box; }\n\n/* ripulisci ombre/material residue */\nmd-card ._md, ._md{ box-shadow:none !important; }\n</style>\n<script>\n// opzionale: piccola \"firma\" in console per ricordare che il tema è attivo\nconsole.log('%cAI Dark Theme loaded','background:#5bb1ff;color:#001a2d;padding:2px 6px;border-radius:6px');\n</script>\n",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 540,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "60c05c5f9db46327",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "LED1 STOP BLINK",
+        "group": "85f5f51f0d526f74",
+        "order": 2,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "LED 1 STOP BLINK",
+        "tooltip": "Ferma lampeggio LED 1",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "BLINK OFF",
+        "payloadType": "str",
+        "topic": "lab/arduino1/cmd/led/1",
+        "topicType": "str",
+        "x": 790,
+        "y": 360,
+        "wires": [
+            [
+                "4dad8bb8db02413a"
+            ]
+        ]
+    },
+    {
+        "id": "4dad8bb8db02413a",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ led1 BLINK OFF",
+        "topic": "lab/arduino1/cmd/led/1",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 1030,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d318c9dc43d66e0d",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "LED2 STOP BLINK",
+        "group": "85f5f51f0d526f74",
+        "order": 6,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "LED 2 STOP BLINK",
+        "tooltip": "Ferma lampeggio LED 2",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "BLINK OFF",
+        "payloadType": "str",
+        "topic": "lab/arduino1/cmd/led/2",
+        "topicType": "str",
+        "x": 790,
+        "y": 400,
+        "wires": [
+            [
+                "9b9faf386cc6fa6f"
+            ]
+        ]
+    },
+    {
+        "id": "9b9faf386cc6fa6f",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ led2 BLINK OFF",
+        "topic": "lab/arduino1/cmd/led/2",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 1030,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "d8fe4f34b4945297",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "LED3 STOP BLINK",
+        "group": "85f5f51f0d526f74",
+        "order": 10,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "LED 3 STOP BLINK",
+        "tooltip": "Ferma lampeggio LED 3",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "BLINK OFF",
+        "payloadType": "str",
+        "topic": "lab/arduino1/cmd/led/3",
+        "topicType": "str",
+        "x": 790,
+        "y": 440,
+        "wires": [
+            [
+                "ea2f9db25b5cbcda"
+            ]
+        ]
+    },
+    {
+        "id": "ea2f9db25b5cbcda",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ led3 BLINK OFF",
+        "topic": "lab/arduino1/cmd/led/3",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 1030,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "107c8c3ea46948ab",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "LED BLINK",
+        "group": "85f5f51f0d526f74",
+        "order": 3,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "LED BLINK",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "BLINK",
+        "payloadType": "str",
+        "topic": "lab/arduino1/cmd/led/3",
+        "topicType": "str",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "039445b6d046d351",
+                "b7d9ad55759464dd"
+            ]
+        ]
+    },
+    {
+        "id": "c56feee215eb6cd2",
+        "type": "ui_switch",
+        "z": "0fe2d26d898f1254",
+        "name": "PTT",
+        "label": "🎙️ PTT",
+        "tooltip": "",
+        "group": "85f5f51f0d526f74",
+        "order": 15,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "lab/voice/ptt",
+        "topicType": "str",
+        "onvalue": "START",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "STOP",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": true,
+        "className": "",
+        "x": 630,
+        "y": 40,
+        "wires": [
+            [
+                "40c4563f708d40a8"
+            ]
+        ]
+    },
+    {
+        "id": "40c4563f708d40a8",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "→ voice PTT",
+        "topic": "lab/voice/ptt",
+        "qos": "1",
+        "retain": "",
+        "broker": "bkr1",
+        "x": 790,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "6b97b4c508da2641",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "← STT",
+        "topic": "lab/voice/stt",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "inputs": 0,
+        "x": 550,
+        "y": 80,
+        "wires": [
+            [
+                "81a20b11f637e049"
+            ]
+        ]
+    },
+    {
+        "id": "81a20b11f637e049",
+        "type": "ui_text",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "order": 4,
+        "width": 6,
+        "height": 1,
+        "name": "Trascritto",
+        "label": "Trascritto",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 780,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "0f582807bc5948ce",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "← Reply",
+        "topic": "lab/voice/reply",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "inputs": 0,
+        "x": 540,
+        "y": 140,
+        "wires": [
+            [
+                "7ca2440cb59dd10d"
+            ]
+        ]
+    },
+    {
+        "id": "7ca2440cb59dd10d",
+        "type": "ui_text",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "order": 8,
+        "width": 6,
+        "height": 1,
+        "name": "Risposta",
+        "label": "Risposta",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 780,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "6abd469cb6d86dea",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "← TTS audio_b64",
+        "topic": "lab/voice/tts_audio",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "inputs": 0,
+        "x": 490,
+        "y": 200,
+        "wires": [
+            [
+                "8e6413a633b572ef"
+            ]
+        ]
+    },
+    {
+        "id": "8e6413a633b572ef",
+        "type": "json",
+        "z": "0fe2d26d898f1254",
+        "name": "JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 650,
+        "y": 200,
+        "wires": [
+            [
+                "9a7423c063a330b4"
+            ]
+        ]
+    },
+    {
+        "id": "67a2185f94868149",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "TTS JSON",
+        "active": false,
+        "tosidebar": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1010,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "9a7423c063a330b4",
+        "type": "function",
+        "z": "0fe2d26d898f1254",
+        "name": "Base64 → MP3",
+        "func": "// Prende la base64 da più varianti di campo\nlet s =\n    (msg.payload && (msg.payload.audio_b64 || msg.payload[\"audio/b64\"])) ||\n    msg.audio_b64 || msg[\"audio/b64\"] ||\n    ((typeof msg.payload === \"string\") ? msg.payload : null);\n\nif (typeof s !== \"string\") {\n    node.error(\"Nessuna stringa base64 trovata in payload\");\n    return null;\n}\n\n// Pulisci prefissi e whitespace\ns = s.trim()\n     .replace(/^data:audio\\/[a-zA-Z0-9+.\\-]+;base64,/, \"\")\n     .replace(/\\s+/g, \"\");\n\n// Normalizza URL-safe → base64 standard\ns = s.replace(/-/g, \"+\").replace(/_/g, \"/\");\n\n// Padding (=)\nconst pad = s.length % 4;\nif (pad) s += \"=\".repeat(4 - pad);\n\n// IMPORTANTISSIMO: lasciare STRINGA base64 nel payload\nmsg.payload  = s;\nmsg.filename = \"C:/Users/pier/Desktop/0_LIBRO_AI/voice_reply.mp3\";\nreturn msg;\n\n\n\n/*\n// accetta {audio_b64:\"...\"} o msg.payload stringa\nlet s = msg.payload?.audio_b64 || msg.audio_b64 || msg.payload;\nif (typeof s !== \"string\") {\n    node.error(\"audio_b64 mancante\"); return null;\n}\n\n// rimuovi eventuale header data: e whitespace\ns = s.trim()\n     .replace(/^data:audio\\/[a-zA-Z0-9+.\\-]+;base64,/, \"\")\n     .replace(/\\s+/g, \"\");\n\n// normalizza url-safe\ns = s.replace(/-/g, \"+\").replace(/_/g, \"/\");\n\n// padding\nconst pad = s.length % 4;\nif (pad) s += \"=\".repeat(4 - pad);\n\n// lasciare STRINGA base64 nel payload (N O N creare Buffer!)\nmsg.payload = s;\n// percorso file: usa forward slash su Windows, è ok\nmsg.filename = \"C:/Users/pier/Desktop/0_LIBRO_AI/voice_reply.mp3\";\nreturn msg;\n\n/*\nlet b64 = msg.payload?.audio_b64 || msg.audio_b64 || msg.payload;\nif (typeof b64 !== \"string\") {\n    node.error(\"Nessun campo audio_b64 nel payload\");\n    return null;\n}\n\n// rimuovi spazi, ritorni e intestazioni data:\nb64 = b64.trim()\n         .replace(/^data:audio\\/[a-zA-Z0-9+.-]+;base64,/, \"\")\n         .replace(/\\s+/g, \"\")\n         .replace(/-/g, \"+\")\n         .replace(/_/g, \"/\");\n\n// padding\nconst pad = b64.length % 4;\nif (pad) b64 += \"=\".repeat(4 - pad);\n\nlet buf;\ntry {\n    buf = Buffer.from(b64, \"base64\");\n} catch (e) {\n    node.error(\"Errore decoding base64: \" + e);\n    return null;\n}\n\n// check header MP3\nconst sig = buf.slice(0, 3).toString(\"ascii\");\nif (sig !== \"ID3\" && !(buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0)) {\n    node.warn(\"Attenzione: header MP3 non riconosciuto \" + buf.slice(0, 8).toString(\"hex\"));\n}\n\nmsg.payload  = buf;\nmsg.filename = \"C:/Users/pier/Desktop/0_LIBRO_AI/voice_reply.mp3\";\nreturn msg;\n*/",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 200,
+        "wires": [
+            [
+                "fdcd984411372a1e",
+                "5b84922dd8d334d6",
+                "67a2185f94868149"
+            ]
+        ]
+    },
+    {
+        "id": "fdcd984411372a1e",
+        "type": "file",
+        "z": "0fe2d26d898f1254",
+        "name": "Scrivi MP3",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "base64",
+        "x": 1010,
+        "y": 200,
+        "wires": [
+            [
+                "af1082874a9721b0"
+            ]
+        ]
+    },
+    {
+        "id": "5b84922dd8d334d6",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "Play Reply",
+        "group": "85f5f51f0d526f74",
+        "order": 7,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "Play Reply",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 970,
+        "y": 40,
+        "wires": [
+            [
+                "exec_mpg123"
+            ]
+        ]
+    },
+    {
+        "id": "exec_mpg123",
+        "type": "exec",
+        "z": "0fe2d26d898f1254",
+        "command": "mpg123",
+        "addpay": false,
+        "append": "-q \"C:\\Users\\pier\\Desktop\\0_LIBRO_AI\\voice_reply.mp3\"",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "mpg123 play",
+        "x": 1150,
+        "y": 40,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "af1082874a9721b0",
+        "type": "delay",
+        "z": "0fe2d26d898f1254",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "100",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 830,
+        "y": 280,
+        "wires": [
+            [
+                "27ddb7ea182868a2"
+            ]
+        ]
+    },
+    {
+        "id": "27ddb7ea182868a2",
+        "type": "exec",
+        "z": "0fe2d26d898f1254",
+        "command": "\"vlc\" --intf dummy --play-and-exit \"C:\\Users\\pier\\Desktop\\0_LIBRO_AI\\voice_reply.mp3\"",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 1250,
+        "y": 280,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "6473740a1b4ade05",
+        "type": "mqtt in",
+        "z": "0fe2d26d898f1254",
+        "name": "",
+        "topic": "lab/voice/reply",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 740,
+        "y": 540,
+        "wires": [
+            [
+                "9a7dadb62afd1065"
+            ]
+        ]
+    },
+    {
+        "id": "9a7dadb62afd1065",
+        "type": "function",
+        "z": "0fe2d26d898f1254",
+        "name": "function 3",
+        "func": "msg.payload = (msg.payload || \"\").toString();\nmsg.ui_control = { \"update\": true };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 560,
+        "wires": [
+            [
+                "6a31df5d143ad63f"
+            ]
+        ]
+    },
+    {
+        "id": "6a31df5d143ad63f",
+        "type": "ui_text",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "order": 17,
+        "width": 9,
+        "height": 5,
+        "name": "Ultima frase parlata",
+        "label": "🗣 Ultima frase parlata",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1070,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "35ecbc5c7ba9ca57",
+        "type": "ui_template",
+        "z": "0fe2d26d898f1254",
+        "group": "75d4f0efc26561f8",
+        "name": "Dark Theme – AI Style",
+        "order": 27,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n/* 🔹 Colore sfondo gruppi e card */\n.nr-dashboard-theme .card,\n.nr-dashboard-theme .group,\n.md-card,\n.vuetify-styles .v-card {\n  background-color: #0f172a !important; /* blu scuro */\n  border-radius: 10px !important;\n  border: 1px solid #1e293b !important;\n}\n\n/* 🔹 Titoli gruppi */\n.nr-dashboard-theme .group h3,\n.vuetify-styles .v-card__title {\n  color: #5bb1ff !important; /* azzurro pastello */\n  font-weight: 600;\n}\n\n/* 🔹 Testi dei valori nei gauge */\n.nr-dashboard-theme .nr-dashboard-gauge .nr-dashboard-gauge-value text,\n.nr-dashboard-theme .nr-dashboard-gauge text {\n  fill: #eaf4ff !important;  /* testo chiaro */\n}\n\n/* 🔹 Testi nelle card info */\n.nr-dashboard-theme .nr-dashboard-text .nr-dashboard-text-value {\n  color: #eaf4ff !important;\n}\n\n/* 🔹 Pulsanti */\n.nr-dashboard-theme .md-button {\n  background-color: #1d4ed8 !important;\n  color: #eaf4ff !important;\n  border-radius: 8px !important;\n}\n\n/* 🔹 Switch e toggle */\n.nr-dashboard-theme .v-input--switch input:checked + .v-input--switch__track {\n  background-color: #38bdf8 !important;\n}\n</style>\n",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1040,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e5e9dcd8564dac1e",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "debug 20",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "011853eadbc92af0",
+        "type": "function",
+        "z": "0fe2d26d898f1254",
+        "name": "Split DHT",
+        "func": "var msg1= msg.payload\nvar t= msg1.split(\"\\t\")\n\nvar temp = { payload: parseInt(t[1])}\nvar hum = {payload:parseInt(t[3])}\nvar sensor_txt={payload:\"T: \" + t[1] + \" H: \" + t[3] }\n\nreturn [temp, hum, sensor_txt];",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 360,
+        "wires": [
+            [
+                "3adf592eb590034e",
+                "ca970a862270ec38"
+            ],
+            [
+                "3adf592eb590034e",
+                "51de0771c59155a0"
+            ],
+            [
+                "5d588bb20f61bfd5"
+            ]
+        ]
+    },
+    {
+        "id": "3adf592eb590034e",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "debug 21",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "90ec885c6cf0ca9e",
+        "type": "telegram receiver",
+        "z": "0fe2d26d898f1254",
+        "name": "",
+        "bot": "5ab45383308eeb47",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 120,
+        "y": 640,
+        "wires": [
+            [
+                "e009c4ef3760fcb8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "e009c4ef3760fcb8",
+        "type": "function",
+        "z": "0fe2d26d898f1254",
+        "name": "function 5",
+        "func": "// Funzione: routing messaggi Telegram\nif (msg.payload.content === \"temperatura\") {\n    return { topic: \"ai/requests/chat\", payload: { id:\"tg1\", message:\"Dimmi la temperatura\" }};\n}\nif (msg.payload.content === \"led on\") {\n    return { topic: \"ai/requests/chat\", payload: { id:\"tg2\", message:\"Accendi il LED 1\" }};\n}\nreturn null",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 660,
+        "wires": [
+            [
+                "61f4af9cecfec6b6",
+                "422edb606524be2f"
+            ]
+        ]
+    },
+    {
+        "id": "61f4af9cecfec6b6",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "debug 22",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "422edb606524be2f",
+        "type": "mqtt out",
+        "z": "0fe2d26d898f1254",
+        "name": "",
+        "topic": "ai/requests/chat",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bkr1",
+        "x": 540,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "4afb66ca479f51f8",
+        "type": "telegram sender",
+        "z": "0fe2d26d898f1254",
+        "name": "",
+        "bot": "5ab45383308eeb47",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 740,
+        "y": 700,
+        "wires": [
+            [
+                "9d8bea698f7d824d"
+            ]
+        ]
+    },
+    {
+        "id": "9d8bea698f7d824d",
+        "type": "function",
+        "z": "0fe2d26d898f1254",
+        "name": "function 6",
+        "func": "msg.payload = msg.payload.reply || \"Nessuna risposta\";\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 640,
+        "wires": [
+            [
+                "914e5b6c47a789d8"
+            ]
+        ]
+    },
+    {
+        "id": "914e5b6c47a789d8",
+        "type": "debug",
+        "z": "0fe2d26d898f1254",
+        "name": "debug 23",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "e82339c8973f6001",
+        "type": "ui_button",
+        "z": "0fe2d26d898f1254",
+        "name": "RBE Button",
+        "group": "85f5f51f0d526f74",
+        "order": 11,
+        "width": 2,
+        "height": 1,
+        "passthru": true,
+        "label": "PTT",
+        "tooltip": "",
+        "color": "{{msg.fontclr}}",
+        "bgcolor": "{{msg.colour}}",
+        "className": "",
+        "icon": "",
+        "payload": "X",
+        "payloadType": "flow",
+        "topic": "",
+        "topicType": "str",
+        "x": 110,
+        "y": 40,
+        "wires": [
+            [
+                "c1906433861d43bb"
+            ]
+        ]
+    },
+    {
+        "id": "c1906433861d43bb",
+        "type": "change",
+        "z": "0fe2d26d898f1254",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "X",
+                "pt": "flow",
+                "to": "payload = \"START\" ? \"STOP\" : \"START\"",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 110,
+        "y": 90,
+        "wires": [
+            [
+                "d69979a2fe2f21f9",
+                "40c4563f708d40a8"
+            ]
+        ]
+    },
+    {
+        "id": "d69979a2fe2f21f9",
+        "type": "ui_text",
+        "z": "0fe2d26d898f1254",
+        "group": "85f5f51f0d526f74",
+        "order": 12,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "{{msg.payload}} PTT",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 330,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "76513d617f8cb734",
+        "type": "ui_spacer",
+        "z": "0fe2d26d898f1254",
+        "name": "spacer",
+        "group": "85f5f51f0d526f74",
+        "order": 13,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "d40a85f377eed1f7",
+        "type": "ui_spacer",
+        "z": "0fe2d26d898f1254",
+        "name": "spacer",
+        "group": "85f5f51f0d526f74",
+        "order": 16,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "85f5f51f0d526f74",
+        "type": "ui_group",
+        "name": "Sensors & Events",
+        "tab": "2c39989380ce153f",
+        "order": 1,
+        "disp": true,
+        "width": 15,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bkr1",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker (192.168.1.108)",
+        "broker": "192.168.1.108",
+        "port": "1883",
+        "clientid": "nodered_pc",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "75d4f0efc26561f8",
+        "type": "ui_group",
+        "name": "Sensor & Events",
+        "tab": "8eccfffa377fb02a",
+        "order": 2,
+        "disp": true,
+        "width": 16,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5ab45383308eeb47",
+        "type": "telegram bot",
+        "botname": "piernewbot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": 300,
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbothost": "0.0.0.0",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "2c39989380ce153f",
+        "type": "ui_tab",
+        "name": "CAP 7 Arduino PTT",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "8eccfffa377fb02a",
+        "type": "ui_tab",
+        "name": "CAP 6 Arduino Controller",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
+
+
+

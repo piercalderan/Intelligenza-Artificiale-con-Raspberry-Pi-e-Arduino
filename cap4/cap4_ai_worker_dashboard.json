@@ -1,0 +1,772 @@
+[
+    {
+        "id": "f1bd58fb95353d3e",
+        "type": "tab",
+        "label": "CAP4 AI Worker Dashboard",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "235f5bf2cdf98535",
+        "type": "ui_text_input",
+        "z": "f1bd58fb95353d3e",
+        "name": "Input text",
+        "label": "Testo",
+        "tooltip": "",
+        "group": "0c90a5c161085104",
+        "order": 1,
+        "width": 11,
+        "height": 1,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "",
+        "topicType": "str",
+        "x": 200,
+        "y": 80,
+        "wires": [
+            [
+                "59d02174261efcbc"
+            ]
+        ]
+    },
+    {
+        "id": "59d02174261efcbc",
+        "type": "change",
+        "z": "f1bd58fb95353d3e",
+        "name": "flow.text = msg.payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "text",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "42cc1073467bcef7",
+        "type": "ui_dropdown",
+        "z": "f1bd58fb95353d3e",
+        "name": "Voice",
+        "label": "Voce",
+        "tooltip": "",
+        "place": "seleziona…",
+        "group": "0c90a5c161085104",
+        "order": 6,
+        "width": 5,
+        "height": 1,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "alloy",
+                "value": "alloy",
+                "type": "str"
+            },
+            {
+                "label": "verse",
+                "value": "verse",
+                "type": "str"
+            },
+            {
+                "label": "sage",
+                "value": "sage",
+                "type": "str"
+            },
+            {
+                "label": "coral",
+                "value": "coral",
+                "type": "str"
+            }
+        ],
+        "payload": "alloy",
+        "topic": "",
+        "x": 190,
+        "y": 130,
+        "wires": [
+            [
+                "c7106a652cffc8b6"
+            ]
+        ]
+    },
+    {
+        "id": "c7106a652cffc8b6",
+        "type": "change",
+        "z": "f1bd58fb95353d3e",
+        "name": "flow.voice = msg.payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "voice",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 130,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f2e077d149c609a4",
+        "type": "ui_button",
+        "z": "f1bd58fb95353d3e",
+        "name": "Ask (chat)",
+        "group": "0c90a5c161085104",
+        "order": 2,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Invia (chat)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "a69fa655216142c6",
+                "3823bcbc8496a8d2"
+            ]
+        ]
+    },
+    {
+        "id": "3823bcbc8496a8d2",
+        "type": "ui_text",
+        "z": "f1bd58fb95353d3e",
+        "group": "0c90a5c161085104",
+        "order": 3,
+        "width": 5,
+        "height": 1,
+        "name": "status",
+        "label": "Stato",
+        "format": "Inviato…",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 430,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a69fa655216142c6",
+        "type": "function",
+        "z": "f1bd58fb95353d3e",
+        "name": "Compose → ai/requests/chat",
+        "func": "// compone JSON {id,message}\nconst text = (flow.get('text') || '').trim();\nif (!text) {\n    node.warn('Testo vuoto');\n    return null;\n}\nconst id = 'c_' + Date.now();\nmsg.topic = 'ai/requests/chat';\nmsg.payload = { id, message: text };\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "f572c4ce080c4076"
+            ]
+        ]
+    },
+    {
+        "id": "f572c4ce080c4076",
+        "type": "mqtt out",
+        "z": "f1bd58fb95353d3e",
+        "name": "Publish → ai/requests/chat",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bkr1",
+        "x": 760,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "239872ba8371c1ac",
+        "type": "mqtt in",
+        "z": "f1bd58fb95353d3e",
+        "name": "Sub ← ai/replies/chat/#",
+        "topic": "ai/replies/chat/#",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "c4cee8490ea3e13d"
+            ]
+        ]
+    },
+    {
+        "id": "c4cee8490ea3e13d",
+        "type": "json",
+        "z": "f1bd58fb95353d3e",
+        "name": "JSON parse",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 420,
+        "y": 260,
+        "wires": [
+            [
+                "8a6826a87a5bd1d4",
+                "27e170dc8315753a"
+            ]
+        ]
+    },
+    {
+        "id": "8a6826a87a5bd1d4",
+        "type": "function",
+        "z": "f1bd58fb95353d3e",
+        "name": "→ textarea + store latest",
+        "func": "// p può essere {id, text} o {reply} a seconda del worker\nconst p   = msg.payload || {};\nconst txt = (p.text || p.reply || p.message || \"\").toString().trim();\nif (!txt) return null;\n\n// 1) Output #1 → aggiorna textarea\nconst out1 = { payload: txt };\n\n// 2) Se auto_speak è ON → prepara richiesta TTS\nconst auto = !!flow.get('auto_speak');\nlet out2 = null;\nif (auto) {\n  const voice = (flow.get('voice') || 'alloy');\n  out2 = {\n    topic: 'ai/requests/tts',\n    payload: {\n      id: 'v_' + Date.now(),\n      text: txt,\n      voice\n    }\n  };\n}\n\n// memorizza per eventuale uso manuale\nflow.set('last_reply', txt);\n\nreturn [out1, out2];\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 280,
+        "wires": [
+            [
+                "d3308b913a226f76"
+            ],
+            [
+                "ab6f4ddcd11a1da7"
+            ]
+        ]
+    },
+    {
+        "id": "f0f3c070ee202c50",
+        "type": "ui_button",
+        "z": "f1bd58fb95353d3e",
+        "name": "Speak input (TTS)",
+        "group": "0c90a5c161085104",
+        "order": 5,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Speak input (TTS)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "",
+        "x": 210,
+        "y": 340,
+        "wires": [
+            [
+                "f61a21abb820d9b6"
+            ]
+        ]
+    },
+    {
+        "id": "f61a21abb820d9b6",
+        "type": "function",
+        "z": "f1bd58fb95353d3e",
+        "name": "Compose → ai/requests/tts",
+        "func": "const text = (flow.get('text') || '').trim();\nconst voice = (flow.get('voice') || 'alloy');\nif (!text) { node.warn('Testo vuoto'); return null; }\nconst id = 'v_' + Date.now();\nmsg.topic = 'ai/requests/tts';\nmsg.payload = { id, text, voice };\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 340,
+        "wires": [
+            [
+                "ab6f4ddcd11a1da7"
+            ]
+        ]
+    },
+    {
+        "id": "ab6f4ddcd11a1da7",
+        "type": "mqtt out",
+        "z": "f1bd58fb95353d3e",
+        "name": "Publish → ai/requests/tts",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bkr1",
+        "x": 760,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "ab3230a0bd46e445",
+        "type": "mqtt in",
+        "z": "f1bd58fb95353d3e",
+        "name": "Sub ← ai/replies/tts/#",
+        "topic": "ai/replies/tts/#",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 420,
+        "wires": [
+            [
+                "15f704a245fe9cd3"
+            ]
+        ]
+    },
+    {
+        "id": "15f704a245fe9cd3",
+        "type": "json",
+        "z": "f1bd58fb95353d3e",
+        "name": "JSON parse (audio_b64)",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 450,
+        "y": 420,
+        "wires": [
+            [
+                "5ab6201c3ba44c95"
+            ]
+        ]
+    },
+    {
+        "id": "5ab6201c3ba44c95",
+        "type": "function",
+        "z": "f1bd58fb95353d3e",
+        "name": "Base64 → Buffer + save path",
+        "func": "const p = msg.payload || {};\nif (!p.audio_b64) { node.warn('audio_b64 mancante'); return null; }\nconst b = Buffer.from(p.audio_b64, 'base64');\nmsg.payload = b;\n// Percorso file su Windows (cambia se serve)\nmsg.filename = \"C:\\\\Users\\\\pier\\\\Desktop\\\\0_LIBRO_AI\\\\tts_out.mp3\";\n// memorizza l'ultimo file per il pulsante Play\nflow.set('last_mp3', msg.filename);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 420,
+        "wires": [
+            [
+                "c8cf0ee64b4d113c",
+                "9822182b656a87d9",
+                "08678aac8b0e7f2b"
+            ]
+        ]
+    },
+    {
+        "id": "c8cf0ee64b4d113c",
+        "type": "file",
+        "z": "f1bd58fb95353d3e",
+        "name": "Scrivi MP3",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1020,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "90db7d1bb8f08090",
+        "type": "ui_button",
+        "z": "f1bd58fb95353d3e",
+        "name": "Play last MP3 (VLC)",
+        "group": "0c90a5c161085104",
+        "order": 8,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Play last MP3 (VLC)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-play",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "",
+        "x": 210,
+        "y": 500,
+        "wires": [
+            [
+                "664b2bc5f9feca0e"
+            ]
+        ]
+    },
+    {
+        "id": "664b2bc5f9feca0e",
+        "type": "function",
+        "z": "f1bd58fb95353d3e",
+        "name": "payload = flow.last_mp3",
+        "func": "msg.payload = flow.get('last_mp3');\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "x": 470,
+        "y": 500,
+        "wires": [
+            [
+                "9822182b656a87d9",
+                "225c20b78db3c546"
+            ]
+        ]
+    },
+    {
+        "id": "9822182b656a87d9",
+        "type": "function",
+        "z": "f1bd58fb95353d3e",
+        "name": "Prep → VLC cmd",
+        "func": "// Prende un percorso valido da msg.filename, msg.payload o flow.last_mp3\nlet file = msg.filename || msg.payload || flow.get('last_mp3') || \"\";\n\n// Scarta payload “1” o valori non stringa\nif (typeof file !== \"string\") file = String(file || \"\");\nif (file.trim() === \"\" || file.trim() === \"1\") return null;\n\n// Se vuoi essere ultra-sicuro che il file esista, decommenta:\n// const fs = require('fs');\n// if (!fs.existsSync(file)) { node.warn(\"File non trovato: \" + file); return null; }\n\n// VLC è nel PATH\nmsg.vlc_cmd = \"vlc --intf dummy --play-and-exit\";\n\n// Metti il percorso tra virgolette e scappa eventuali virgolette interne\nmsg.payload = '\"' + file.replace(/\"/g, '\"\"') + '\"';\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 500,
+        "wires": [
+            [
+                "15fabfe4caf8f8d4",
+                "b121181a0ca4aaa1"
+            ]
+        ]
+    },
+    {
+        "id": "15fabfe4caf8f8d4",
+        "type": "exec",
+        "z": "f1bd58fb95353d3e",
+        "command": "",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": true,
+        "oldrc": false,
+        "name": "VLC headless",
+        "x": 880,
+        "y": 580,
+        "wires": [
+            [
+                "df38eeece6a266d5"
+            ],
+            [
+                "df38eeece6a266d5"
+            ],
+            [
+                "df38eeece6a266d5"
+            ]
+        ]
+    },
+    {
+        "id": "df38eeece6a266d5",
+        "type": "debug",
+        "z": "f1bd58fb95353d3e",
+        "name": "VLC stdout/stderr/rc",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "b121181a0ca4aaa1",
+        "type": "debug",
+        "z": "f1bd58fb95353d3e",
+        "name": "debug 16",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "225c20b78db3c546",
+        "type": "debug",
+        "z": "f1bd58fb95353d3e",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "23fa9aa90e5cde96",
+        "type": "inject",
+        "z": "f1bd58fb95353d3e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 620,
+        "wires": [
+            [
+                "664b2bc5f9feca0e"
+            ]
+        ]
+    },
+    {
+        "id": "08678aac8b0e7f2b",
+        "type": "debug",
+        "z": "f1bd58fb95353d3e",
+        "name": "debug 18",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "27e170dc8315753a",
+        "type": "debug",
+        "z": "f1bd58fb95353d3e",
+        "name": "debug 19",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "ui_switch_autotts",
+        "type": "ui_switch",
+        "z": "f1bd58fb95353d3e",
+        "name": "Auto speak replies",
+        "label": "Auto speak replies",
+        "tooltip": "",
+        "group": "0c90a5c161085104",
+        "order": 7,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 210,
+        "y": 20,
+        "wires": [
+            [
+                "set_auto_speak"
+            ]
+        ]
+    },
+    {
+        "id": "set_auto_speak",
+        "type": "change",
+        "z": "f1bd58fb95353d3e",
+        "name": "flow.auto_speak = msg.payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "auto_speak",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "x": 480,
+        "y": 20,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d3308b913a226f76",
+        "type": "ui_text",
+        "z": "f1bd58fb95353d3e",
+        "group": "0c90a5c161085104",
+        "order": 9,
+        "width": 17,
+        "height": 8,
+        "name": "risposta",
+        "label": "Risposta",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 940,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "ui_tab_ai_dark",
+        "type": "ui_template",
+        "z": "f1bd58fb95353d3e",
+        "group": "0c90a5c161085104",
+        "name": "Dark Theme – AI Style",
+        "order": 10,
+        "width": 17,
+        "height": 1,
+        "format": "<style id=\"ai-dark-theme\">\n:root{\n  --bg:#0f1e2c; --card:#132434; --text:#eaf4ff; --muted:#a7c0d8; --line:#2b3a4a; --accent:#5bb1ff; --accent-2:#2b88d8;\n}\n/* canvas generale */\nbody.nr-dashboard-theme, md-content, .nr-dashboard-template, .nrdb-body, .nr-dashboard-theme md-content._md{ background:var(--bg) !important; }\n\n/* card / panel */\nmd-card, .nr-dashboard-widget, .nr-dashboard-template .nr-dashboard-cardpanel{\n  background:var(--card) !important; color:var(--text) !important;\n  border-radius:14px !important; box-shadow:0 6px 24px rgba(0,0,0,.25) !important;\n}\n\n/* titoli card */\nmd-card md-toolbar, .nr-dashboard-cardtitle{ background:transparent !important; color:var(--accent) !important; border-bottom:1px solid transparent !important; }\n\n/* testo generico */\n.nr-dashboard-text, .nr-dashboard-template, .nr-dashboard-template *{ color:var(--text) !important; }\n\n/* input & textarea */\nmd-input-container .md-input, .nr-dashboard-textinput input, .nr-dashboard-template textarea, textarea.md-input{\n  background:#0f1e2c !important; color:var(--text) !important; border:1px solid var(--line) !important;\n  border-radius:10px !important; padding:8px 10px !important;\n}\n/* placeholder */\nmd-input-container .md-input::placeholder, .nr-dashboard-textinput input::placeholder, textarea::placeholder{ color:var(--muted) !important; }\n\n/* dropdown */\nmd-select, md-select-value, .md-select-value .md-text{ color:var(--text) !important; }\nmd-select{ border:1px solid var(--line) !important; border-radius:10px !important; background:#0f1e2c !important; padding:6px 8px !important; }\n\n/* bottoni */\nmd-button, .nr-dashboard-button .md-button{\n  background:var(--accent) !important; color:#00223d !important; border-radius:10px !important; font-weight:600 !important;\n}\nmd-button.md-raised:not([disabled]):hover{ filter:brightness(1.06); }\nmd-button[disabled]{ opacity:.5 !important; }\n\n/* switch/slider */\nmd-switch .md-bar{ background:var(--line) !important; }\nmd-switch.md-checked .md-bar{ background:linear-gradient(90deg, var(--accent), var(--accent-2)) !important; }\nmd-switch .md-thumb{ background:#0f1e2c !important; border:1px solid var(--line) !important; }\nmd-switch.md-checked .md-thumb{ background:#00223d !important; border-color:transparent !important; }\n\n/* tabelle e liste */\nmd-list-item, md-list{ background:transparent !important; color:var(--text) !important; }\n\n/* debug panel (se mostrato in ui_template) */\npre, code{ background:#0f1e2c !important; border:1px solid var(--line); color:var(--text); border-radius:8px; padding:8px; }\n\n/* separatori leggeri */\nmd-divider, .nr-dashboard-template hr{ border-color:var(--line) !important; }\n\n/* link */\na, a:visited{ color:var(--accent) !important; }\na:hover{ color:var(--muted) !important; }\n\n/* spacing uniforme dentro i widget */\n.nr-dashboard-template .pad, .nr-dashboard-text input, .nr-dashboard-template input, .nr-dashboard-template textarea{ box-sizing:border-box; }\n\n/* ripulisci ombre/material residue */\nmd-card ._md, ._md{ box-shadow:none !important; }\n</style>\n<script>\n// opzionale: piccola \"firma\" in console per ricordare che il tema è attivo\nconsole.log('%cAI Dark Theme loaded','background:#5bb1ff;color:#001a2d;padding:2px 6px;border-radius:6px');\n</script>\n",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 760,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7f5e3c46a145d038",
+        "type": "ui_spacer",
+        "z": "f1bd58fb95353d3e",
+        "name": "spacer",
+        "group": "0c90a5c161085104",
+        "order": 4,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "0c90a5c161085104",
+        "type": "ui_group",
+        "name": "Chat & TTS",
+        "tab": "4ea0735abd4035a8",
+        "order": 1,
+        "disp": true,
+        "width": 17,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bkr1",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker (192.168.1.108)",
+        "broker": "192.168.1.108",
+        "port": "1883",
+        "clientid": "nodered_pc",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4ea0735abd4035a8",
+        "type": "ui_tab",
+        "name": "CAP 4 AI Worker",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

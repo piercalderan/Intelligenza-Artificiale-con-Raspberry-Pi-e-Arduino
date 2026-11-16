@@ -1,0 +1,321 @@
+[
+    {
+        "id": "2f6c3ea7d39cd15f",
+        "type": "tab",
+        "label": "CAP4 AI Worker",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "inject_chat",
+        "type": "inject",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Send Chat (Arduino curiosità)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "ai/requests/chat",
+        "payload": "{\"id\":\"t1\",\"text\":\"Dimmi una curiosità su Arduino UNO.\"}",
+        "payloadType": "json",
+        "x": 240,
+        "y": 160,
+        "wires": [
+            [
+                "mqtt_out_tts"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_chat",
+        "type": "mqtt out",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Publish → ai/requests/chat",
+        "topic": "ai/requests/chat",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "bkr1",
+        "x": 540,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "mqtt_in_chat_replies",
+        "type": "mqtt in",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Sub ← ai/replies/chat/#",
+        "topic": "ai/replies/chat/#",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 220,
+        "wires": [
+            [
+                "json_chat",
+                "debug_raw_chat"
+            ]
+        ]
+    },
+    {
+        "id": "json_chat",
+        "type": "json",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "JSON parse",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "debug_chat_clean"
+            ]
+        ]
+    },
+    {
+        "id": "debug_raw_chat",
+        "type": "debug",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "CHAT raw",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 460,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "debug_chat_clean",
+        "type": "debug",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "CHAT reply (id + testo)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "inject_tts",
+        "type": "inject",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Send TTS (ciao dal laboratorio)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "ai/requests/tts",
+        "payload": "{\"id\":\"v1\",\"text\":\"Ciao dal laboratorio!\",\"voice\":\"alloy\"}",
+        "payloadType": "json",
+        "x": 250,
+        "y": 340,
+        "wires": [
+            [
+                "mqtt_out_tts"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_tts",
+        "type": "mqtt out",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Publish → ai/requests/tts",
+        "topic": "ai/requests/tts",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "broker": "bkr1",
+        "x": 530,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "mqtt_in_tts_replies",
+        "type": "mqtt in",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Sub ← ai/replies/tts/#",
+        "topic": "ai/replies/tts/#",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "bkr1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 400,
+        "wires": [
+            [
+                "json_tts",
+                "debug_raw_tts"
+            ]
+        ]
+    },
+    {
+        "id": "json_tts",
+        "type": "json",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "JSON parse",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 400,
+        "wires": [
+            [
+                "fn_decode_b64",
+                "debug_tts_json"
+            ]
+        ]
+    },
+    {
+        "id": "debug_raw_tts",
+        "type": "debug",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "TTS raw",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 470,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "debug_tts_json",
+        "type": "debug",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "TTS JSON (id/format)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 700,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "fn_decode_b64",
+        "type": "function",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Base64 → Buffer (MP3)",
+        "func": "if (!msg.payload || !msg.payload.audio_b64) {\n    node.warn(\"Nessun audio_b64 nel payload\");\n    return null;\n}\nconst b64 = msg.payload.audio_b64;\nmsg.payload = Buffer.from(b64, 'base64');\n// Cambia il path per salvare sul tuo PC\nmsg.filename = \"C:\\\\Users\\\\pier\\\\Desktop\\\\0_LIBRO_AI\\\\tts_out.mp3\"\n//msg.filename = \"/home/USER/Downloads/tts_out.mp3\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 440,
+        "wires": [
+            [
+                "file_mp3",
+                "debug_file"
+            ]
+        ]
+    },
+    {
+        "id": "file_mp3",
+        "type": "file",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "Scrivi MP3",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 930,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "debug_file",
+        "type": "debug",
+        "z": "2f6c3ea7d39cd15f",
+        "name": "MP3 salvato",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "filename",
+        "targetType": "msg",
+        "x": 930,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "bkr1",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker (192.168.1.108)",
+        "broker": "192.168.1.108",
+        "port": "1883",
+        "clientid": "nodered_pc",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

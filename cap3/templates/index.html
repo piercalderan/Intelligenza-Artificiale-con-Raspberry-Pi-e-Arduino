@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AI Gateway – Raspberry Pi</title>
+<style>
+  :root{
+    --bg:#0b1723; --card:#132434; --accent:#5bb1ff; --muted:#e6f2fa;
+  }
+  body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#fff;margin:0;padding:24px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  h1{margin:0 0 8px;font-size:22px;}
+  .sub{color:#a7c0d8;margin:0 0 20px;}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+  .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,.25);}
+  .card h2{margin:0 0 10px;font-size:18px;color:var(--accent);}
+  textarea,input{width:100%;box-sizing:border-box;border-radius:10px;border:1px solid #2b3a4a;background:#0f1e2c;color:#eaf4ff;padding:10px;}
+  button{background:var(--accent);color:#00223d;border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  select{
+    background:#0f1e2c;color:#eaf4ff;border:1px solid #2b3a4a;border-radius:10px;padding:8px;
+  }
+  .out{background:#0f1e2c;border:1px solid #2b3a4a;padding:10px;border-radius:10px;min-height:80px;white-space:pre-wrap}
+  .row{display:flex;gap:8px;align-items:center;margin-top:8px}
+  img{max-width:100%;border-radius:10px;border:1px solid #2b3a4a;background:#0f1e2c}
+  .muted{color:#a7c0d8;font-size:12px}
+  #viz{
+    width:100%;height:80px;display:block;margin-top:8px;border-radius:10px;
+    background:#0f1e2c;box-shadow: inset 0 0 0 1px #2b3a4a;
+  }
+  
+  .badge{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.2px;
+}
+.badge--placeholder{
+  background:#514a2b;      /* marrone scuro tenue */
+  color:#ffde80;            /* giallo pastello */
+  border:1px solid #8a7d3a; /* bordo caldo */
+}
+
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AI Gateway – Raspberry Pi</h1>
+  <p class="sub">Pagina locale servita dal Pi. Chat, TTS e immagine Wikipedia passano dal proxy Flask.</p>
+
+  <div class="grid">
+    <!-- CHAT -->
+    <div class="card">
+      <h2>Chat</h2>
+      <textarea id="q" rows="5" placeholder="Scrivi una domanda..."></textarea>
+      <div class="row">
+        <button id="askBtn">Chiedi</button>
+        <span class="muted">POST /api/ask (Responses API)</span>
+      </div>
+      <div id="chatOut" class="out" style="margin-top:10px"></div>
+      <div class="row"><button id="speakBtn">Leggi</button><span class="muted">usa /api/tts sulla risposta</span></div>
+    </div>
+
+    <!-- TTS -->
+    <div class="card">
+      <h2>Text-to-Speech</h2>
+      <input id="ttsText" placeholder="Testo da leggere ad alta voce..." />
+      <div class="row">
+        <select id="voiceSel">
+          <option value="alloy" selected>Alloy (neutra)</option>
+          <option value="verse">Verse (profonda)</option>
+          <option value="coral">Corallo (chiara)</option>
+          <option value="sage">Saggio (docente)</option>
+        </select>
+        <button id="ttsBtn">Parla</button>
+        <span class="muted">/api/tts → MP3</span>
+      </div>
+      <audio id="audio" controls style="margin-top:10px;width:100%"></audio>
+      <canvas id="viz" width="800" height="80" aria-hidden="true"></canvas>
+    </div>
+
+    <!-- IMMAGINE WIKIPEDIA -->
+    <div class="card">
+      <h2>Immagine da Wikipedia</h2>
+      <input id="imgPrompt" placeholder="Es. Raspberry Pi 5" />
+      <div class="row">
+        <button id="imgBtn">Cerca immagine</button>
+        <span class="muted">GET /api/image_wiki</span>
+      </div>
+      <div style="margin-top:10px">
+
+<img id="wikiImg" alt="Immagine Wikipedia"
+     src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'><defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'><stop offset='0' stop-color='%230f1e2c'/><stop offset='1' stop-color='%23132434'/></linearGradient></defs><rect width='1200' height='800' fill='url(%23g)'/><g opacity='0.15'><circle cx='950' cy='170' r='120' fill='%235bb1ff'/><circle cx='250' cy='650' r='180' fill='%232b88d8'/></g><g transform='translate(0,30)'><rect x='350' y='210' width='500' height='350' rx='24' ry='24' fill='%230b1723' stroke='%232b3a4a' stroke-width='6'/><circle cx='800' cy='260' r='18' fill='%232b3a4a'/><path d='M380 480 L520 320 L600 430 L640 380 L790 540 Z' fill='%231e3a56'/></g><text x='600' y='640' fill='%23E6F2FA' font-family='Segoe UI, Roboto, Arial, sans-serif' font-size='38' text-anchor='middle'>Segnaposto</text><text x='600' y='690' fill='%23A7C0D8' font-family='Segoe UI, Roboto, Arial, sans-serif' font-size='28' text-anchor='middle'>Nessuna immagine caricata</text></svg>" />
+
+        <div id="wikiMeta" class="muted" style="margin-top:6px"></div>
+        
+        <div id="wikiBadgeRow" class="row" style="display:none; margin-top:6px">
+  <span class="badge badge--placeholder">Segnaposto</span>
+  <span class="muted"> Nessuna immagine reale trovata (mostrato un placeholder)</span>
+</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const askBtn   = document.getElementById("askBtn");
+const chatOut  = document.getElementById("chatOut");
+const q        = document.getElementById("q");
+const speakBtn = document.getElementById("speakBtn");
+
+const ttsBtn   = document.getElementById("ttsBtn");
+const ttsText  = document.getElementById("ttsText");
+const voiceSel = document.getElementById("voiceSel");
+const audioEl  = document.getElementById("audio");
+
+const imgBtn   = document.getElementById("imgBtn");
+const imgPrompt= document.getElementById("imgPrompt");
+const wikiImg  = document.getElementById("wikiImg");
+const wikiMeta = document.getElementById("wikiMeta");
+
+// CHAT
+askBtn.onclick = async () => {
+  const text = q.value.trim();
+  if (!text) return;
+  askBtn.disabled = true; chatOut.textContent = "…";
+  try {
+    const r = await fetch("/api/ask", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ q: text })
+    });
+    const j = await r.json();
+    chatOut.textContent = j.text || JSON.stringify(j);
+  } catch (e) {
+    chatOut.textContent = "Errore: " + e;
+  } finally {
+    askBtn.disabled = false;
+  }
+};
+
+// LEGGI risposta chat (POST per testi lunghi)
+speakBtn.onclick = async () => {
+  const text = (chatOut.textContent || "").trim();
+  if (!text) {
+    alert("Niente da leggere: fai prima una domanda.");
+    return;
+  }
+  const voice = voiceSel.value;
+  speakBtn.disabled = true;
+  try {
+    const r = await fetch("/api/tts", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ text, voice })
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const blob = await r.blob();
+    audioEl.src = URL.createObjectURL(blob);
+    await audioEl.play();
+  } catch (e) {
+    alert("Errore TTS: " + e);
+  } finally {
+    speakBtn.disabled = false;
+  }
+};
+
+// TTS libero (GET pratico per <audio>)
+ttsBtn.onclick = async () => {
+  const text = ttsText.value.trim();
+  const voice = voiceSel.value;
+  if (!text) return;
+  ttsBtn.disabled = true;
+  try {
+    const url = "/api/tts?text=" + encodeURIComponent(text) + "&voice=" + encodeURIComponent(voice);
+    audioEl.src = url + "&_=" + Date.now();
+    await audioEl.play();
+  } catch (e) {
+    alert("Errore TTS: " + e);
+  } finally {
+    ttsBtn.disabled = false;
+  }
+};
+
+// Wikipedia image
+
+imgBtn.onclick = async () => {
+  const p = imgPrompt.value.trim();
+  if (!p) return;
+  imgBtn.disabled = true;
+  wikiImg.removeAttribute("src"); wikiMeta.textContent = "";
+  try {
+    const url = "/api/image_wiki?prompt=" + encodeURIComponent(p);
+    const resp = await fetch(url, { method: "GET" });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const lang = resp.headers.get("X-Wiki-Lang") || "";
+    const title = resp.headers.get("X-Wiki-Title") || p;
+    const page  = resp.headers.get("X-Wiki-Page") || "";
+    const blob = await resp.blob();
+    wikiImg.src = URL.createObjectURL(blob);
+    wikiMeta.textContent = (lang? ("Lang: " + lang + " – ") : "") + title + (page? (" – " + page) : "");
+  } catch (e) {
+    alert("Errore immagine: " + e);
+  } finally {
+    imgBtn.disabled = false;
+  }
+};
+
+
+
+/*
+imgBtn.onclick = async () => {
+  const p = imgPrompt.value.trim();
+  if (!p) return;
+  imgBtn.disabled = true;
+  wikiImg.removeAttribute("src");
+  wikiMeta.textContent = "";
+  
+  
+  const badgeRow = document.getElementById("wikiBadgeRow");
+  badgeRow.style.display = "none";
+
+  try {
+    const url = "/api/image_wiki?prompt=" + encodeURIComponent(p);
+    const resp = await fetch(url, { method: "GET" });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+
+    // meta dagli header
+    const lang  = resp.headers.get("X-Wiki-Lang")  || "";
+    const title = resp.headers.get("X-Wiki-Title") || p;
+    const page  = resp.headers.get("X-Wiki-Page")  || "";
+
+    const blob = await resp.blob();
+    wikiImg.src = URL.createObjectURL(blob);
+
+    // mostra info pagina (se disponibile)
+    wikiMeta.textContent =
+      (lang && lang !== "placeholder" ? ("Lang: " + lang + " > ") : "") +
+      title + (page && page !== "placeholder" ? (" > " + page) : "");
+
+    // SEGNAPOSTO: se X-Wiki-Lang == "placeholder", mostra il badge
+    if ((lang || "").toLowerCase() === "placeholder") {
+      badgeRow.style.display = "flex";
+    } else {
+      badgeRow.style.display = "none";
+    }
+  } catch (e) {
+    alert("Errore immagine: " + e);
+  } finally {
+    imgBtn.disabled = false;
+  }
+};
+*/
+
+// ====== Visualizzatore a barre (Web Audio API) ======
+
+const viz  = document.getElementById("viz");
+const vctx = viz.getContext("2d");
+let audioCtx = null, analyser = null, srcNode = null, gainNode = null, rafId = 0;
+
+function initAnalyzer(){
+  if (audioCtx) return;
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+  analyser.smoothingTimeConstant = 0.8;
+
+  // Sorgente dal <audio>
+  srcNode  = audioCtx.createMediaElementSource(audioEl);
+
+  // Nodo di uscita (controllo volume, se serve)
+  gainNode = audioCtx.createGain();
+  gainNode.gain.value = 1.0;
+
+  // Collegamenti: src ? analyser ? gain ? destination
+  srcNode.connect(analyser);
+  analyser.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  // Evita doppio audio (nativo + WebAudio): silenzia il player HTML
+  audioEl.muted = true;
+}
+
+function drawViz(){
+  if (!analyser) return;
+  const w = viz.width, h = viz.height;
+  const buffer = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(buffer);
+
+  vctx.clearRect(0,0,w,h);
+  const grad = vctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0, '#5bb1ff');
+  grad.addColorStop(1, '#2b88d8');
+
+  const bars = 48;
+  const step = Math.floor(buffer.length / bars);
+  const barW = (w / bars) * 0.8;
+  const gap  = (w / bars) * 0.2;
+
+  for (let i=0;i<bars;i++){
+    const v = buffer[i*step] / 255;
+    const bh = Math.max(2, v * (h-6));
+    const x  = i*(barW+gap) + 2;
+    const y  = h - bh - 3;
+    vctx.fillStyle = grad;
+    vctx.fillRect(x, y, barW, bh);
+    vctx.fillStyle = 'rgba(255,255,255,.06)';
+    vctx.fillRect(x, y, barW, 3);
+  }
+  rafId = requestAnimationFrame(drawViz);
+}
+
+audioEl.addEventListener('play', async () => {
+  try {
+    initAnalyzer();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+    cancelAnimationFrame(rafId);
+    drawViz();
+  } catch(e){ console.warn(e); }
+});
+audioEl.addEventListener('pause', () => cancelAnimationFrame(rafId));
+audioEl.addEventListener('ended', () => cancelAnimationFrame(rafId));
+
+</script>
+</body>
+</html>
