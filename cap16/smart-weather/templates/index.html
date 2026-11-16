@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name=viewport content="width=device-width,initial-scale=1"/>
+  <title>Smart Weather Station</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:24px;}
+    .row{display:flex;gap:16px;flex-wrap:wrap}
+    .card{border:1px solid #ddd;border-radius:12px;padding:16px;box-shadow:0 2px 8px #0001}
+    button{padding:10px 14px;border-radius:10px;border:1px solid #ccc;cursor:pointer}
+    #chart{max-width:900px}
+  </style>
+</head>
+<body>
+  <h1>Smart Weather Station</h1>
+
+  <div class="row">
+    <div class="card">
+      <div>Temperatura: <b id="temp">--</b> °C</div>
+      <div>Umidità: <b id="hum">--</b> %</div>
+      <div>Ultimo campione: <span id="ts">--</span></div>
+      <div style="margin-top:10px">
+        <button onclick="say()">Pronuncia i dati</button>
+        <button onclick="led('on')">LED ON</button>
+        <button onclick="led('off')">LED OFF</button>
+      </div>
+      <audio id="player" controls style="margin-top:10px;display:block"></audio>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card" id="chart">
+      <canvas id="c"></canvas>
+    </div>
+  </div>
+
+  <!-- CDN Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

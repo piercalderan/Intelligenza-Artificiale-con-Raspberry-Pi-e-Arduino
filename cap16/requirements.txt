@@ -1,0 +1,10 @@
+openai>=1.40.0
+flask
+python-dotenv
+pyserial
+pandas
+matplotlib
+gTTS
+pydub
+paho-mqtt
+spidev
